@@ -7,7 +7,7 @@ stat.n.save <- function(Kout, poll, stat, year, threshold=NULL, nrank=NULL) {
 }
 
 processYear <- function (poll, year, verbose=F) {
-  source("R/config.R")
+  source("/home/giovanni/R/projects/pesco-annuale/R/config.R")
   configProcess(poll)
   
   ## prepara dati CTM

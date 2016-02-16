@@ -1,6 +1,6 @@
-source("R/write.R")
-source("R/krigYear.R")
-source("R/config.R")
+source("/home/giovanni/R/projects/pesco-annuale/R/write.R")
+source("/home/giovanni/R/projects/pesco-annuale/R/krigYear.R")
+source("/home/giovanni/R/projects/pesco-annuale/R/config.R")
 
 ## scelta
 #library(tcltk)

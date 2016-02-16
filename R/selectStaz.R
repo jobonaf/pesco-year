@@ -1,5 +1,5 @@
 selectStaz <- function(poll, year, fileAna, only.rrqa=TRUE){
-  library(pesco)
+  library(pesco, lib.loc="/home/giovanni/R/x86_64-pc-linux-gnu-library/3.2")
   library(arpautils)
   read.sql(fileAna)->ANA
   Ana <- ANA
@@ -13,12 +13,12 @@ selectStaz <- function(poll, year, fileAna, only.rrqa=TRUE){
   ## selezione stazioni
   for(pr in c("PC","PR","RE","MO","BO","FE","FC","RA","RN")) {
     ii <- dbqa.list.active.staz(con, 
-                                Day=as.POSIXct(paste(year,"-01-01",sep="")), 
+                                Day=as.POSIXct(paste(year,"-02-01",sep="")), 
                                 prov=pr)
     ff <- dbqa.list.active.staz(con, 
-                                Day=as.POSIXct(paste(year,"-12-31",sep="")), 
+                                Day=as.POSIXct(paste(year,"-11-30",sep="")), 
                                 prov=pr)
-    aa <- c(aa, intersect(ii,ff)) # tengo solo le stazioni attive tutto l'anno
+    aa <- c(aa, intersect(ii,ff)) # tengo solo le stazioni attive almeno 10 mesi
     if(only.rrqa) aa <- aa[which(dbqa.isrrqa(con,aa))]
   }
   dbDisconnect(con)
