@@ -135,7 +135,7 @@ fname2description <- function(fname, unit=bquote(mu*g/m^3)) {
   return(description)
 }
 
-
+## tabella dell'esposizione con soglie multiple
 tabExposure <- function(Indic, thresholds, Pop, 
                         Year=fname2description(names(Indic@data)[1])$Year){
   pop   <- Pop@data[[1]]
@@ -188,4 +188,31 @@ barplotExposure <- function(Files, thresholds, Pop) {
   mtext(bquote("popolazione esposta a" ~ .(Descr$Stat) ), side=3, line=1, font = 2, adj=0)
   dev.off()
   
+}
+
+## esposizione con soglia singola
+getExposure <- function(Indic, threshold, Pop, necess=0.75){
+  pop   <- Pop@data[[1]]
+  indic <- Indic@data[[1]]
+  iOver <- which(indic>threshold)
+  iNa   <- which(is.na(indic))
+  pOver <- sum(pop[iOver], na.rm=T)
+  pNa   <- sum(pop[iNa  ], na.rm=T)
+  pTot  <- sum(pop, na.rm=T)
+  pOver <- ifelse(pNa/pTot>(1-necess),
+                  NA,
+                  pOver/pTot)
+  return(pOver)
+}
+
+
+getExposure.years <- function(Files, threshold, Pop, ...) {
+  Exp <- Year <- NULL
+  for (File in Files) {
+    Indic <- readAsciiGrid(File)
+    Exp <- c(Exp,getExposure(Indic, threshold=threshold, Pop=Pop, ...))
+    Year <- c(Year,fname2description(names(Indic@data)[1])$Year)
+  }
+  names(Exp) <- Year
+  return(Exp)
 }

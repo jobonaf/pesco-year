@@ -16,4 +16,4 @@ TODO
  - [x] mappe
  - [x] tabelle Comuni
  - [x] istogrammi
- - [ ] grafico sintetico EEA-style
+ - [x] grafico sintetico EEA-style

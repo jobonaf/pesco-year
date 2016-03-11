@@ -1,10 +1,13 @@
 source("R/popExposure.R")
-vars <- c("NO2_mean","O3_nexc","PM10_mean","PM10_nexc","PM2.5_mean")
+vars <- c("NO2_mean","O3_nexc","PM10_mean","PM10_nexc",
+          "PM2.5_mean","PM10_rank36","O3_rank26")
 Thr <- list(c(10,20,30,40),
             c(10,25,50,75),
             c(10,20,30,40),
             c(10,20,35,50),
-            c(10,15,20,25))
+            c(10,15,20,25),
+            c(15,30,50,75),
+            c(60,90,120,150))
 nv <- length(vars)
 library(maptools)
 file.pop <- "~/util/geodata/pop_1km.txt.2010"
