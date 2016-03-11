@@ -1,7 +1,7 @@
 empty_package <- function(name="qualita-dell-aria-valutazione-delle-concentrazioni-di-fondo") {
   library(ckanr)
   source("~/util/R/ckan_keys.R")
-  ckanr_setup(url = "http://ckan.arpa.emr.it", 
+  ckanr_setup(url = ckan_url, 
               key = ckan_key)
   pack <- package_search(q=paste0("name:",name))
   pack_id <- pack$results[[1]]$resources[[1]]$package_id
@@ -17,7 +17,7 @@ empty_package <- function(name="qualita-dell-aria-valutazione-delle-concentrazio
 pesco2ckan <- function(poll,indic,year,type,filein=NULL) {
   library(ckanr)
   source("~/util/R/ckan_keys.R")
-  ckanr_setup(url = "http://ckan.arpa.emr.it", 
+  ckanr_setup(url = ckan_url, 
               key = ckan_key)
   pack <- package_search(q="name:qualita-dell-aria-valutazione-delle-concentrazioni-di-fondo")
   pack_id <- pack$results[[1]]$id
