@@ -1,3 +1,5 @@
+## genera il plot 'stile Agenzia Europea' della popolazione esposta
+
 source("R/popExposure.R")
 vars <- c("NO2_mean","O3_nexc","PM10_nexc","PM2.5_mean")
 Thr <- c(40,25,35,25)
@@ -47,3 +49,5 @@ legend(x = 1, y = 150, xpd = T, bty = "n", ncol = 1, legend = Descr,
        col=cols, pch=19, lwd=3)
 par(oldpar)
 dev.off()
+
+write.csv(file="timeseriesExposure.csv",EXP)

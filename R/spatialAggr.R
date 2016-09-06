@@ -44,11 +44,22 @@ mapComuni <- function(fileIndic) {
   
   Descr <- fname2description(fileIndic)
   Thr <- Descr$Threshold
+  
+  Ter <- Pop
+  CellArea <- Indic@grid@cellsize[1]*Indic@grid@cellsize[2]*0.001*0.001
+  Ter@data[[1]] <- (Pop@data[[1]]+1)/(Pop@data[[1]]+1)*CellArea
+  
   Pop@data[[2]] <- Pop@data[[1]]*(Indic@data[[1]]>Thr)
   Pop@data[[3]] <- Pop@data[[1]]*(is.na(Indic@data[[1]]))
   POP   <- aggregate(x=Pop, by=comER, FUN=sum, na.rm=T)
   POP@data[[4]] <- POP@data[[2]]*100/POP@data[[1]]
   names(POP@data) <- c("totale","esposta","non.class","perc.esposta")
+  
+  Ter@data[[2]] <- Ter@data[[1]]*(Indic@data[[1]]>Thr)
+  Ter@data[[3]] <- Ter@data[[1]]*(is.na(Indic@data[[1]]))
+  TER   <- aggregate(x=Ter, by=comER, FUN=sum, na.rm=T)
+  TER@data[[4]] <- TER@data[[2]]*100/TER@data[[1]]
+  names(TER@data) <- c("totale","esposto","non.class","perc.esposto")
   
   ### media pesata con popolazione
   library(Hmisc)
@@ -61,7 +72,18 @@ mapComuni <- function(fileIndic) {
                                    normwt=TRUE, na.rm=T)
   }
   
-  ## bounding box
+  ## read shapefile
+  ocean    <- readShapePoly("~/util/geodata/ocean_europe_UTM32")
+  regioni  <- readShapePoly("~/util/geodata/reg2011_g")
+  province <- readShapePoly("~/util/geodata/prov2011_g")
+  proj4string(obj=regioni)  <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
+  proj4string(obj=province) <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
+  proj4string(obj=ocean)    <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
+  regER   <- regioni  [regioni$COD_REG==8,]
+  provER  <- province [province$COD_REG==8,]
+  provNER <- province [province$COD_REG!=8,]
+
+    ## bounding box
   BB <- regER@bbox
   dx <- BB[1,2]-BB[1,1]
   dy <- BB[2,2]-BB[2,1]
@@ -91,17 +113,6 @@ mapComuni <- function(fileIndic) {
   mtext(bquote("popolazione esposta (oltre" ~
                  .(Descr$Threshold) ~ .(Descr$Unit)*")"), side=3, line=0, font = 2, adj=0)
   
-  ## read shapefile
-  ocean    <- readShapePoly("~/util/geodata/ocean_europe_UTM32")
-  regioni  <- readShapePoly("~/util/geodata/reg2011_g")
-  province <- readShapePoly("~/util/geodata/prov2011_g")
-  proj4string(obj=regioni)  <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
-  proj4string(obj=province) <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
-  proj4string(obj=ocean)    <- CRS("+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs +towgs84=0,0,0")
-  regER   <- regioni  [regioni$COD_REG==8,]
-  provER  <- province [province$COD_REG==8,]
-  provNER <- province [province$COD_REG!=8,]
-  
   plot(provER,border="grey30",add=T,lwd=1)
   plot(provNER,border="white",col="white",add=T,lwd=1)
   plot(ocean,border="lightskyblue",col="lightskyblue1",add=T,lwd=2,
@@ -129,7 +140,11 @@ mapComuni <- function(fileIndic) {
                     PopTot=POP@data$totale,
                     PopEsposta=POP@data$esposta,
                     PopNonClass=POP@data$non.class,
-                    PercPopEsposta=round(POP@data$esposta*100/POP@data$totale))
+                    PercPopEsposta=round(POP@data$esposta*100/POP@data$totale),
+                    TerTot=TER@data$totale,
+                    TerEsposto=TER@data$esposto,
+                    TerNonClass=TER@data$non.class,
+                    PercTerEsposto=round(TER@data$esposto*100/TER@data$totale))
   filecsv <- paste("Comuni_",gsub(basename(fileIndic),
                                   pattern=".asc",
                                   replacement=".csv"),sep="")
